@@ -22,6 +22,7 @@ type StatusType = 'Valido' | 'Proximo ao vencimento' | 'Vencido'
 
 interface CertificadoComStatus extends CertificadoView {
   status: StatusType
+  estado: string
 }
 
 function calcStatus(dataVencimento: string): StatusType {
@@ -80,8 +81,27 @@ export default function CertificadosPage() {
     }
 
     if (data) {
-      const comStatus: CertificadoComStatus[] = (data as CertificadoView[]).map((c) => ({
+      const rows = data as CertificadoView[]
+
+      // Busca o estado da empresa direto na tabela empresas
+      // (a view não expõe esse campo, mas o estado já existe no cadastro)
+      const turmaIds = Array.from(new Set(rows.map((c) => c.turma_id)))
+      const { data: turmas } = await supabase
+        .from('turmas')
+        .select('id, empresa_cnpj')
+        .in('id', turmaIds)
+      const cnpjPorTurma = Object.fromEntries((turmas || []).map((t) => [t.id, t.empresa_cnpj]))
+
+      const cnpjs = Array.from(new Set((turmas || []).map((t) => t.empresa_cnpj)))
+      const { data: empresas } = await supabase
+        .from('empresas')
+        .select('cnpj, estado')
+        .in('cnpj', cnpjs)
+      const estadoPorCnpj = Object.fromEntries((empresas || []).map((e) => [e.cnpj, e.estado]))
+
+      const comStatus: CertificadoComStatus[] = rows.map((c) => ({
         ...c,
+        estado: estadoPorCnpj[cnpjPorTurma[c.turma_id]] ?? '',
         status: calcStatus(c.data_vencimento),
       }))
       setCertificados(comStatus)
@@ -166,6 +186,10 @@ export default function CertificadosPage() {
         data: new Date(cert.data_fim).toLocaleDateString('pt-BR'),
         empresa: cert.empresa_nome,
         cidade: cert.empresa_cidade || '',
+        estado: cert.estado || '',
+        conteudoProgramatico: (cert.conteudo_programatico || '')
+          .split('\n')
+          .filter(Boolean),
       })
 
       if (!blob) {
@@ -211,6 +235,10 @@ export default function CertificadosPage() {
         data: new Date(cert.data_fim).toLocaleDateString('pt-BR'),
         empresa: cert.empresa_nome,
         cidade: cert.empresa_cidade || '',
+        estado: cert.estado || '',
+        conteudoProgramatico: (cert.conteudo_programatico || '')
+          .split('\n')
+          .filter(Boolean),
       }))
 
       const turmaName = selectedCerts.length === 1

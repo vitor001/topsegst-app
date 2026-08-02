@@ -76,8 +76,10 @@ SELECT
   trab.cpf AS trabalhador_cpf,
   e.nome AS empresa_nome,
   e.cidade AS empresa_cidade,
+  e.estado AS empresa_estado,
   tr.nome AS treinamento_nome,
-  tr.carga_horaria
+  tr.carga_horaria,
+  tr.conteudo_programatico
 FROM turma_trabalhadores tt
 JOIN turmas t ON t.id = tt.turma_id
 JOIN trabalhadores trab ON trab.id = tt.trabalhador_id

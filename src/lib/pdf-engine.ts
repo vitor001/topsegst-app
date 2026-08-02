@@ -14,6 +14,7 @@ export async function generatePdfCertificate(
       dataConclusao: data.data,
       empresa: data.empresa,
       cidade: data.cidade,
+      estado: data.estado ?? '',
       conteudoProgramatico: data.conteudoProgramatico ?? [],
     })
     return new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' })
@@ -42,6 +43,7 @@ export async function generateBatchCertificates(
           dataConclusao: data.data,
           empresa: data.empresa,
           cidade: data.cidade,
+          estado: data.estado ?? '',
           conteudoProgramatico: data.conteudoProgramatico ?? [],
         })
         const sanitized = data.nome.replace(/[^a-zA-Z\u00c0-\u00ff\s]/g, '').trim()

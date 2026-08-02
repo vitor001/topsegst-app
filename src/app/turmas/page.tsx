@@ -280,6 +280,7 @@ export default function TurmasPage() {
       data: formatDate(form.data_fim),
       empresa: empresa.nome,
       cidade: empresa.cidade,
+      estado: empresa.estado,
       conteudoProgramatico: (treinamento.conteudo_programatico || '').split('\n').filter(Boolean),
     }))
 

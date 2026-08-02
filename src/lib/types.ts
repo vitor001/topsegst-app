@@ -57,8 +57,10 @@ export interface CertificadoView {
   trabalhador_cpf: string
   empresa_nome: string
   empresa_cidade: string
+  empresa_estado: string
   treinamento_nome: string
   carga_horaria: number
+  conteudo_programatico: string
 }
 
 export interface CertificateData {
@@ -69,6 +71,7 @@ export interface CertificateData {
   data: string
   empresa: string
   cidade: string
+  estado?: string
   conteudoProgramatico?: string[]
 }
 
