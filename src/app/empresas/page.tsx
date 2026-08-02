@@ -13,6 +13,18 @@ const ESTADOS = [
   'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
 ]
 
+function mascaraCNPJ(valor: string): string {
+  const digitos = valor.replace(/\D/g, '').slice(0, 14)
+  let resultado = ''
+  for (let i = 0; i < digitos.length; i++) {
+    if (i === 2 || i === 5) resultado += '.'
+    else if (i === 8) resultado += '/'
+    else if (i === 12) resultado += '-'
+    resultado += digitos[i]
+  }
+  return resultado
+}
+
 const initialForm: Empresa = {
   cnpj: '',
   nome: '',
@@ -61,7 +73,10 @@ export default function EmpresasPage() {
       return
     }
 
-    const { error } = await supabase.from('empresas').upsert(form, { onConflict: 'cnpj' })
+    // Remove a pontuação da máscara antes de salvar (banco guarda só os dígitos)
+    const payload: Empresa = { ...form, cnpj: form.cnpj.replace(/\D/g, '') }
+
+    const { error } = await supabase.from('empresas').upsert(payload, { onConflict: 'cnpj' })
 
     if (error) {
       setToast({ type: 'error', message: error.message })
@@ -150,8 +165,10 @@ export default function EmpresasPage() {
             <input
               className="form-control"
               value={form.cnpj}
-              onChange={(e) => setForm({ ...form, cnpj: e.target.value })}
+              onChange={(e) => setForm({ ...form, cnpj: mascaraCNPJ(e.target.value) })}
               placeholder="00.000.000/0000-00"
+              inputMode="numeric"
+              maxLength={18}
               required
             />
           </div>

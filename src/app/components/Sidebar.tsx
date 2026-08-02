@@ -26,7 +26,13 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <GraduationCap className="logo-icon" size={28} />
+        {/* eslint-disable-next-line @next/next/no-img-element -- logo estático do app */}
+        <img
+          src="/icon.png"
+          alt="TOPSEGST"
+          className="logo-icon"
+          style={{ height: 28, width: 28, objectFit: 'contain' }}
+        />
         <span>TOPSEGST</span>
       </div>
       <nav className="nav-menu">

@@ -13,6 +13,17 @@ interface ParsedRow {
   cpf?: string
 }
 
+function mascaraCPF(valor: string): string {
+  const digitos = valor.replace(/\D/g, '').slice(0, 11)
+  let resultado = ''
+  for (let i = 0; i < digitos.length; i++) {
+    if (i === 3 || i === 6) resultado += '.'
+    else if (i === 9) resultado += '-'
+    resultado += digitos[i]
+  }
+  return resultado
+}
+
 export default function TrabalhadoresPage() {
   const [trabalhadores, setTrabalhadores] = useState<Trabalhador[]>([])
   const [empresas, setEmpresas] = useState<Empresa[]>([])
@@ -277,8 +288,10 @@ export default function TrabalhadoresPage() {
           <input
             className="form-control"
             value={cpf}
-            onChange={(e) => setCpf(e.target.value)}
+            onChange={(e) => setCpf(mascaraCPF(e.target.value))}
             placeholder="000.000.000-00"
+            inputMode="numeric"
+            maxLength={14}
           />
         </div>
         <div className="form-group" style={{ marginTop: '1rem' }}>
