@@ -42,3 +42,9 @@ next-env.d.ts
 
 # certificados de teste
 /certificado_teste.pdf
+
+# arquivos internos (nao publicar no GitHub)
+/AGENTS.md
+/database.sql
+/grade_referencia.pdf
+/public/templates/certificado_template.pdf
